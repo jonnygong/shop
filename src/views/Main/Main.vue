@@ -145,7 +145,7 @@
         this.$store.commit('SET_OPENED_LIST')
       },
       openTag (url, name) {
-        //        console.log(url, name);
+        // console.log(url, name);
         // 欢迎页不做任何操作，直接跳转
         if (url !== '/main') {
           let pageOpenedList = this.$store.state.pageOpenedList
@@ -189,7 +189,6 @@
           .then(() => {
             this.$http.post('logout')
             this.$store.dispatch('loginOut')
-            this.$store.commit('CLEAR_AUTH_MENU')
             this.$router.push('/login')
           })
           .catch(() => {})
