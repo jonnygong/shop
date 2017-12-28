@@ -1,6 +1,6 @@
 # 快房传媒后台管理系统（无权限版）
 
-> [带权限版本](/dev-template/admin-auth)
+> [带权限版本](http://git.kfw001.com:9090//dev-template/admin-auth)
 
 ## 本地调试
 
