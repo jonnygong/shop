@@ -2,6 +2,10 @@
 
 > [带权限版本](http://git.kfw001.com:9090//dev-template/admin-auth)
 
+## 代码风格
+
+本项目遵循 [`Javascript Standard Style`](https://standardjs.com/readme-zhcn.html)
+
 ## 目录结构
 
 ```
