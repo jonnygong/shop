@@ -7,25 +7,29 @@
 import axios from 'axios'
 // 加载本地配置文件
 import configs from '@/configs/api'
+import systems from '@/configs'
 // 导入全局配置
 import './config.js'
 // 获取请求地址域名以及接口列表
 const {api} = configs
 
+// 验证参数必须为object
+// arg 为object时返回true, 否则返回false
+const verifyObject = function (arg) {
+  return ( arg instanceof Array ? false : arg instanceof Object ? true : false )
+}
 // 处理回调参数
 const handleResponse = function (res) {
-  return (res.data ? res.data : null)
+  return ( res.data ? res.data : null )
 }
 // core
 export default {
   post (name, params, options = {}) {
     // 验证name参数, 必填参数
-    if (name == null) {
-      throw new Error(`
+    if (name == null) throw `
             error arguments: name is undefined,
             please check your function.
-        `)
-    }
+        `
     // 验证所使用的方法是否被配置
     // if( api[name] == null ) throw `
     //     error arguments: name is not configured,
@@ -38,12 +42,10 @@ export default {
   },
   get (name, params) {
     // 验证name参数, 必填参数
-    if (name == null) {
-      throw new Error(`
+    if (name == null) throw `
             error arguments: name is undefined,
             please check your function.
-        `)
-    }
+        `
     // if( api[name] == null ) throw `
     //     error arguments: name is not configured,
     //     please check \'@\/configs\/api.js\'.

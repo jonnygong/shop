@@ -105,7 +105,7 @@
         reader.onload = async () => {
           // 拿到 base64 代码
           let params = {
-            uploadimg: reader.result
+            pic: reader.result
           }
           const res = await this.$http.post('imageUpload', params)
           if (res === null) return

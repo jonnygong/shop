@@ -24,7 +24,7 @@
                               align="right"
                               type="datetime"
                               placeholder="选择开始日期"
-                              style="width: 100%;"></el-date-picker>
+                              style="width: 100%"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="2">-</el-col>
@@ -34,7 +34,7 @@
                               align="right"
                               type="datetime"
                               placeholder="选择结束日期"
-                              style="width: 100%;"></el-date-picker>
+                              style="width: 100%"></el-date-picker>
 
             </el-form-item>
           </el-col>
@@ -45,7 +45,7 @@
                         align="right"
                         type="datetime"
                         :placeholder="item.placeholder ? item.placeholder : '请选择时间' "
-                        style="width: 100%;"></el-date-picker>
+                        style="width: 100%"></el-date-picker>
         <!-- 单图片上传 -->
         <i-uploader v-else-if="item.type === 'upload'"
                     v-model="formData[item.prop]"></i-uploader>
@@ -268,14 +268,14 @@
             this.$confirm('确认提交吗？', '提示', {}).then(async () => {
               this.formLoading = true
               // 处理时间为时间戳
-              // let _next_open_ = this.formData.next_open;
+              // let _next_open_ = this.formData.next_open
               // if (typeof this.formData.next_open === 'number') {
               //   _next_open_ = this.formData.next_open / 1000
               // } else {
               //   _next_open_ = new Date(this.formData.next_open).getTime() / 1000
               // }
               let params = Object.assign({}, this.formData)
-              // params.next_open = _next_open_; // 后台接收10位时间戳，需要转换
+              // params.next_open = _next_open_ // 后台接收10位时间戳，需要转换
               params.detail = this.getUEContent('ue') // 富文本内容
               params.images = this.getImageList('album') // 多图上传
               const res = await this.$http.post(`${MODEL_NAME}/update`, params)

@@ -21,7 +21,8 @@
   body {
     margin: 0;
     padding: 0;
-    font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
+    font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
+    Microsoft YaHei, SimSun, sans-serif;
     font-size: 14px;
     color: #333;
     -webkit-font-smoothing: antialiased;
@@ -35,12 +36,12 @@
     background: #e4e7ea;
   }
 
-  .el-submenu [class^=fa] {
+  .el-submenu [class^="fa"] {
     vertical-align: baseline;
     margin-right: 10px;
   }
 
-  .el-menu-item [class^=fa] {
+  .el-menu-item [class^="fa"] {
     vertical-align: baseline;
     margin-right: 10px;
   }
@@ -60,7 +61,7 @@
 
   .fade-enter-active,
   .fade-leave-active {
-    transition: all .2s ease;
+    transition: all 0.2s ease;
   }
 
   .fade-enter,

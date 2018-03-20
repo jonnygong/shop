@@ -4,34 +4,29 @@
       <el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
         {{collapsed ? '' : sysName}}
       </el-col>
-      <el-col :span="14" class="header-bar">
+      <el-col :span="1">
         <div class="tools" @click.prevent="collapse">
           <i class="fa fa-align-justify"></i>
         </div>
-        <div class="head-nav">
-          <!--<strong class="title">{{$route.name}}</strong>-->
-          <el-breadcrumb separator="/" class="breadcrumb-inner">
-            <el-breadcrumb-item v-for="item in $route.matched"
-                                :key="item.path" :to="item.path">
-              {{ item.name }}
-            </el-breadcrumb-item>
-          </el-breadcrumb>
-        </div>
+      </el-col>
+      <el-col :span="12">
+        <el-tooltip content="点击可切换公众号" placement="right" effect="light" style="cursor: pointer">
+          <span @click="handleChange('wechat')">当前公众号：{{ curWechat }}</span>
+        </el-tooltip>
+        <span style="margin: 0 10px">|</span>
+        <el-tooltip content="点击可切换项目" placement="right" effect="light" style="cursor: pointer">
+          <span @click="handleChange('project')">当前项目：{{ curProject }}</span>
+        </el-tooltip>
       </el-col>
       <el-col :span="4" class="userinfo">
         <el-dropdown trigger="hover">
-                    <span class="el-dropdown-link userinfo-inner">
-                        <img :src="avatar"/> {{username}}</span>
+                    <span class="el-dropdown-link userinfo-inner"><img
+                      :src="this.sysUserAvatar"/> {{sysUserName}}</span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="handleRedirect('个人资料')">
-              个人资料
-            </el-dropdown-item>
-            <el-dropdown-item @click.native="handleRedirect('个人设置')">
-              个人设置
-            </el-dropdown-item>
-            <el-dropdown-item divided @click.native="logout">
-              注销
-            </el-dropdown-item>
+            <!--<el-dropdown-item>我的消息</el-dropdown-item>-->
+            <!--<el-dropdown-item>设置</el-dropdown-item>-->
+            <!--<el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>-->
+            <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -39,63 +34,44 @@
     <el-col :span="24" class="main">
       <aside :class="collapsed?'menu-collapsed':'menu-expanded'">
         <!--导航菜单-->
-        <el-menu :default-active="currentPageName"
-                 class="el-menu-vertical-aliyun"
-                 :collapse="collapsed"
-                 unique-opened>
-          <template v-for="(item,index) in nav">
-            <!-- 二级菜单 -->
-            <el-submenu :index="index+''"
-                        v-if="item.children && item.children.length > 0">
-              <!-- 二级菜单顶级 -->
+        <el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleopen"
+                 @close="handleclose" @select="handleselect" :collapse="collapsed"
+                 unique-opened router>
+          <template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
+            <el-submenu :index="index+''" v-if="!item.leaf">
               <template slot="title">
                 <i :class="['icon',item.iconCls]"></i>
                 <span slot="title">{{item.name}}</span>
               </template>
-              <!-- 二级菜单下级 -->
-              <el-menu-item-group style="overflow: hidden">
-                <!--<span slot="title">{{item.name}}</span>-->
-                <!-- && child.url-->
-                <template v-for="child in item.children">
-                  <!--无三级菜单-->
-                  <el-menu-item
-                    :index="child.url"
-                    :key="child.url"
-                    v-if="!child.children"
-                    @click="openTag(child.url, child.name)">
-                    {{child.name}}
-                  </el-menu-item>
-                  <!--有三级菜单-->
-                  <el-submenu
-                    :index="child.url"
-                    :key="child.url"
-                    v-if="child.children">
-                    <span slot="title">{{child.name}}</span>
-                    <el-menu-item v-for="subChild in child.children"
-                                  :index="subChild.url"
-                                  :key="subChild.url"
-                                  @click="openTag(subChild.url, subChild.name)">
-                      {{subChild.name}}
-                    </el-menu-item>
-                  </el-submenu>
-                </template>
+
+              <el-menu-item-group>
+                <span slot="title">{{item.name}}</span>
+                <el-menu-item v-for="child in item.children" :index="child.path" :key="child.path"
+                              v-if="!child.hidden">{{child.name}}
+                </el-menu-item>
               </el-menu-item-group>
+
             </el-submenu>
-            <!-- 一级菜单 -->
-            <el-menu-item v-if="!item.children"
-                          :index="item.url"
-                          @click="openTag(item.url, item.name)">
+
+            <el-menu-item v-if="item.leaf&&item.children.length>0"
+                          :index="item.children[0].path">
               <i :class="['icon',item.iconCls]"></i>
-              <span slot="title">{{item.name}}</span>
+              <span slot="title">{{item.children[0].name}}</span>
             </el-menu-item>
 
           </template>
         </el-menu>
+
       </aside>
       <section class="content-container">
         <div class="grid-content bg-purple-light">
-          <el-col :span="24">
-            <openedPageTags :pageTagsList="pageTagsList" class="opened-page-list"></openedPageTags>
+          <el-col :span="24" class="breadcrumb-container">
+            <strong class="title">{{$route.name}}</strong>
+            <el-breadcrumb separator="/" class="breadcrumb-inner">
+              <el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
+                {{ item.name }}
+              </el-breadcrumb-item>
+            </el-breadcrumb>
           </el-col>
           <el-col :span="24" class="content-wrapper">
             <transition name="fade" mode="out-in">
@@ -109,116 +85,76 @@
 </template>
 
 <script>
-  import configs from '@/configs'
-  import openedPageTags from '@/components/openedPageTags/openedPageTags'
-
-  const {title} = configs
-
   export default {
     data () {
       return {
-        sysName: title,
+        sysName: '互动通用后台',
         collapsed: false,
-        currentPageName: this.$route.path
+        sysUserName: '',
+        sysUserAvatar: '',
+        form: {
+          name: '',
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: ''
+        }
       }
     },
     computed: {
-      username () {
-        return this.$store.state.user.name
+      curProject () {
+        return window.sessionStorage.getItem('PROJECT_NAME') === null
+          ? '未选择项目'
+          : window.sessionStorage.getItem('PROJECT_NAME')
       },
-      avatar () {
-        const reg = /[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/
-        return reg.test(this.$store.state.user.avatar)
-          ? this.$store.state.user.avatar
-          : require('@/assets/images/loggeduser.png')
-      },
-      // 导航菜单
-      nav () {
-        return this.$store.state.nav
-      },
-      pageTagsList () {
-        return this.$store.state.pageOpenedList // 打开的页面的页面对象
+      curWechat () {
+        return window.sessionStorage.getItem('WECHAT_NAME') === null
+          ? '未选择公众号'
+          : window.sessionStorage.getItem('WECHAT_NAME')
       }
     },
     methods: {
-      initTag () {
-        this.$store.commit('SET_OPENED_LIST')
-      },
-      openTag (url, name) {
-        // console.log(url, name);
-        // 欢迎页不做任何操作，直接跳转
-        if (url !== '/main') {
-          let pageOpenedList = this.$store.state.pageOpenedList
-          let openedPageLen = pageOpenedList.length
-          let i = 0
-          let tagHasOpened = false
-          while (i < openedPageLen) {
-            if (url === pageOpenedList[i].path) {
-              // 页面已经打开
-              this.$store.commit('MOVE_TO_SECOND', i)
-              tagHasOpened = true
-              break
-            }
-            i++
-          }
-          // 已打开标签，则切换到已有的，否则新增一个
-          if (!tagHasOpened) {
-            this.$store.commit('INCREASE_TAG', {
-              path: url,
-              name: name
-            })
-            sessionStorage.pageOpenedList = JSON.stringify(
-              this.$store.state.pageOpenedList
-            ) // 本地存储已打开页面
-          }
-          this.$store.commit('SET_CURRENT_TITLE', url)
+      handleChange (type) {
+        if (type === 'project') {
+          window.sessionStorage.removeItem('PROJECT_ID')
+          window.sessionStorage.removeItem('PROJECT_NAME')
+          window.location.replace('/admin/#/project')
+        } else {
+          window.sessionStorage.removeItem('WECHAT_ID')
+          window.sessionStorage.removeItem('WECHAT_NAME')
+          window.location.replace('/admin/#/')
         }
-        this.$router.push({
-          path: url
-        })
       },
-      // 菜单跳转
-      handleRedirect (data) {
-        this.$router.push({name: data})
+      handleopen () {
+        // console.log('handleopen');
       },
+      handleclose () {
+        // console.log('handleclose');
+      },
+      handleselect (a, b) {},
       // 退出登录
       logout () {
+//        let _this = this
         this.$confirm('确认退出吗?', '提示', {
-          type: 'warning'
+          // type: 'warning'
         })
           .then(() => {
-            this.$http.post('logout')
-            this.$store.dispatch('loginOut')
-            this.$router.push('/login')
+            this.$store.dispatch('login_out')
+            window.location.href = '/admin/'
           })
           .catch(() => {})
-      },
-      // 获取用户信息
-      async getUserData () {
-        const res = await this.$http.post('personData')
-        if (res === null) return
-        this.$store.dispatch('setUserInfo', {
-          user: res.param.realname,
-          avatar: res.param.thumb
-        })
       },
       // 折叠导航栏
       collapse () {
         this.collapsed = !this.collapsed
       }
     },
-    watch: {
-      $route (to) {
-        this.currentPageName = to.path
-        sessionStorage.currentPageName = to.path
-      }
-    },
     mounted () {
-      this.getUserData()
-      this.initTag()
-    },
-    components: {
-      openedPageTags
+      this.sysUserName = sessionStorage.getItem('USER_NAME') || ''
+      this.sysUserAvatar = require('@/assets/images/loggeduser.png')
     }
   }
 </script>

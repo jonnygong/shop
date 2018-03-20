@@ -1,2 +1,1 @@
 // getters
-export default {}

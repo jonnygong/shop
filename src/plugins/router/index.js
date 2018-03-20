@@ -12,21 +12,51 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = `${configs.title} - ${to.name}`
-  // 需要鉴权的路由地址
-  if (to.meta.requiresAuth && to.path !== '/login') {
-    // 如果未登录，跳转
-    if (window.localStorage.getItem('IS_LOGIN') === null) {
-      next({
-        path: '/login',
-        query: {redirect: to.fullPath}
-        // 将跳转的路由path作为参数，登录成功后跳转到该路由
-      })
+
+// 获取access_token
+  let isLogin = sessionStorage.getItem('IS_LOGIN')
+  // 判断是否已登录，未登录则跳转至登录页
+  if (process.env.NODE_ENV === 'production') {
+    if (!isLogin) {
+      window.location.href = '/admin/'
     } else {
-      next()
+      let openId = sessionStorage.getItem('shop_id')
+      if (openId === undefined && to.path !== '/main') {
+        // 错误提示
+        Message.error({
+          message: '请先配置商铺信息',
+          showClose: true
+        })
+      } else {
+        // 若已登录，则检查是否已选择公众号
+        let wechatId = sessionStorage.getItem('WECHAT_ID')
+        if (!wechatId && to.path !== '/') {
+          // 错误提示
+          Message.error({
+            message: '请先选择公众号',
+            showClose: true
+          })
+          window.location.href = '/admin/'
+        } else {
+          next()
+        }
+      }
     }
   } else {
     next()
   }
 })
+// // 若已登录，则检查是否已选择公众号
+// let wechatId = sessionStorage.getItem('WECHAT_ID');
+// if (!wechatId && to.path !== '/') {
+//   // 错误提示
+//   Message.error({
+//     message: '请先选择公众号',
+//     showClose: true,
+//   });
+//   window.location.href = '/admin/';
+// } else {
+//   next();
+// }
 
 export default router

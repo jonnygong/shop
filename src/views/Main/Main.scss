@@ -12,18 +12,6 @@
     line-height: 60px;
     background: $color-primary;
     color: #fff;
-    .header-bar {
-      display: flex;
-      align-items: center;
-      .el-breadcrumb__item__inner, .el-breadcrumb__item__inner a {
-        color: #ddd;
-      }
-      .el-breadcrumb__item:last-child .el-breadcrumb__item__inner {
-        color: #fff;
-        font-weight: bold;
-      }
-    }
-
     .userinfo {
       text-align: right;
       padding-right: 35px;
@@ -41,7 +29,7 @@
       }
     }
     .logo {
-      //width:180px;
+      //width:230px;
       height: 60px;
       font-size: 20px;
       padding-left: 20px;
@@ -60,7 +48,7 @@
       }
     }
     .logo-width {
-      width: 180px;
+      width: 200px;
     }
     .logo-collapse-width {
       width: 64px
@@ -81,9 +69,8 @@
     overflow: hidden;
 
     aside {
-      //flex: 0 0 180px;
-      //width: 180px;
-      width: 100%;
+      flex: 0 0 200px;
+      width: 200px;
       // position: absolute;
       // top: 0px;
       // bottom: 0px;
@@ -99,7 +86,6 @@
         width: 60px;
         .item {
           position: relative;
-          width: 100%;
         }
         .submenu {
           position: absolute;
@@ -122,8 +108,8 @@
       background-color: #eef1f6;
     }
     .menu-expanded {
-      flex: 0 0 180px;
-      width: 180px;
+      flex: 0 0 200px;
+      width: 200px;
       background-color: #eef1f6;
     }
     .content-container {
@@ -133,8 +119,9 @@
       // right: 0px;
       // top: 0px;
       // bottom: 0px;
-      // left: 180px;
+      // left: 230px;
       overflow-y: scroll;
+      padding: 20px;
       .breadcrumb-container {
         //margin-bottom: 15px;
         .title {
@@ -146,33 +133,9 @@
           float: right;
         }
       }
-
-      .opened-page-list {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        overflow: hidden;
-        border-bottom: 1px solid #ddd;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        padding: 10px 20px;
-        margin-bottom: 20px;
-
-        .el-tag {
-          display: inline-block;
-          margin-right: 10px;
-          height: 30px;
-          line-height: 30px;
-          padding: 0 10px;
-          cursor: pointer;
-        }
-      }
-
-
-
       .content-wrapper {
         background-color: #fff;
         box-sizing: border-box;
-        padding: 0 20px 20px 20px;
       }
     }
   }
@@ -194,15 +157,6 @@
   text-decoration: none;
 }
 
-.form-wrapper {
-  width: 60%;
-  margin-top: 20px;
-}
-
 .line {
   text-align: center;
-}
-
-.taglist-moving-animation-move {
-  transition: transform .3s;
 }
