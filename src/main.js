@@ -17,4 +17,3 @@ const vue = new Vue({
 
 // 导出 vue 实例, 用于 api 统一错误提示
 export const vm = vue
-

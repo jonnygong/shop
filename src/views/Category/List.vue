@@ -84,9 +84,9 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="200" fixed="right">
+      <el-table-column label="操作" width="280" fixed="right">
         <template slot-scope="scope">
-          <!-- <el-button size="small" @click="handleIndex(scope.$index, scope.row)">关键词</el-button> -->
+          <el-button size="small" @click="handleNext(scope.$index, scope.row)">子分类</el-button>
           <el-button size="small"
                      @click="statusSubmit(scope.$index, scope.row)"
                      :disabled="scope.row.status === -1">
@@ -229,9 +229,9 @@
 
         })
       },
-      async handleIndex (index, row) {
-        console.log(`${this.$route.path}/${row.id}/categoryindex`)
-        this.$router.push(`${this.$route.path}/${row.id}/categoryindex`)
+      async handleNext (index, row) {
+        console.log(`${this.$route.path}/${row.id}/categorynext`)
+        this.$router.push(`${this.$route.path}/${row.id}/categorynext`)
       },
       // 显示编辑界面
       async handleEdit (index, row) {

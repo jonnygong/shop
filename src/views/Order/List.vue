@@ -43,6 +43,47 @@
               style="width: 100%;">
       <el-table-column type="selection" width="55">
       </el-table-column>
+      <el-table-column prop="order_sn" label="订单编号" width="180">
+      </el-table-column>
+      <el-table-column prop="status" label="订单状态" width="100">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.status === 1 ? 'warning'
+            : scope.row.status === 2 ? 'success'
+            : scope.row.status === 3 ? 'success'
+            : scope.row.status === 4 ? 'success'
+            : scope.row.status === 5 ? 'success'
+            : scope.row.status === 6 ? 'danger'
+            : scope.row.status === 7 ? 'success'
+            : scope.row.status === 8 ? 'warning'
+            : scope.row.status === 9 ? 'success'
+            : 'gray'">
+            {{ scope.row.status === 1 ? '待付款'
+            : scope.row.status === 2 ? '已付款'
+              : scope.row.status === 3 ? '已确认'
+                : scope.row.status === 4 ? '已发货'
+                  : scope.row.status === 5 ? '已收货'
+                    : scope.row.status === 6 ? '退款申请'
+                      : scope.row.status === 7 ? '退款成功'
+                        : scope.row.status === 8 ? '待评价'
+                          : scope.row.status === 9 ? '已评价'
+                            : '无效订单' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="member_id" label="会员编号" width="180">
+      </el-table-column>
+      <el-table-column prop="total_money" label="订单总金额" width="120">
+      </el-table-column>
+      <el-table-column prop="user_note" label="用户备注" width="180">
+        <template slot-scope="scope">
+          {{ scope.row.user_note === '' ? '无' : scope.row.user_note}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="shop_note" label="商家备注" width="180">
+        <template slot-scope="scope">
+          {{ scope.row.shop_note === '' ? '无' : scope.row.shop_note}}
+        </template>
+      </el-table-column>
       <!-- 普通列表显示 -->
       <el-table-column
         v-for="(item,index) in tableColumn"
@@ -70,34 +111,9 @@
       <!-- 时间戳转日期 -->
       <el-table-column prop="create_time" label="订单创建时间" width="180" :formatter="formateTime">
       </el-table-column>
-      <el-table-column prop="status" label="订单状态" width="100">
+      <el-table-column label="操作" width="140" fixed="right">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status === 1 ? 'warning'
-            : scope.row.status === -1 ? 'success'
-            : scope.row.status === -1 ? 'success'
-            : scope.row.status === -1 ? 'success'
-            : scope.row.status === -1 ? 'success'
-            : scope.row.status === -1 ? 'danger'
-            : scope.row.status === -1 ? 'success'
-            : scope.row.status === -1 ? 'warning'
-            : scope.row.status === -1 ? 'success'
-            : 'gray'">
-            {{ scope.row.status === 1 ? '待付款'
-            : scope.row.status === 2 ? '已付款'
-              : scope.row.status === 3 ? '已确认'
-                : scope.row.status === 4 ? '已发货'
-                  : scope.row.status === 5 ? '已收货'
-                    : scope.row.status === 6 ? '退款申请'
-                      : scope.row.status === 7 ? '退款成功'
-                        : scope.row.status === 8 ? '待评价'
-                          : scope.row.status === 9 ? '已评价'
-                            : '无效订单' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="240" fixed="right">
-        <template slot-scope="scope">
-          <el-button size="small" @click="handleOrdergoods(scope.$index, scope.row)">订单商品</el-button>
+          <!--<el-button size="small" @click="handleOrdergoods(scope.$index, scope.row)">订单商品</el-button>-->
           <!-- <el-button size="small"
                      @click="statusSubmit(scope.$index, scope.row)"
                      :disabled="scope.row.status === -1">
@@ -111,53 +127,43 @@
 
     <!--工具条-->
     <el-col :span="24" class="toolbar">
-      <el-button type="primary"
-                 size="small"
+      <el-button size="small"
                  @click="batchAction('pay')"
                  :disabled="this.sels.length===0">待付款
       </el-button>
-      <el-button type="primary"
-                 size="small"
+      <el-button size="small"
                  @click="batchAction('paid')"
                  :disabled="this.sels.length===0">已付款
       </el-button>
-      <el-button type="primary"
-                 size="small"
+      <el-button size="small"
                  @click="batchAction('confirmed')"
                  :disabled="this.sels.length===0">已确认
       </el-button>
-      <el-button type="primary"
-                 size="small"
+      <el-button size="small"
                  @click="batchAction('shipped')"
                  :disabled="this.sels.length===0">已发货
       </el-button>
-      <el-button type="primary"
-                 size="small"
+      <el-button size="small"
                  @click="batchAction('received')"
                  :disabled="this.sels.length===0">已收货
       </el-button>
-      <el-button type="primary"
-                 size="small"
+      <el-button size="small"
                  @click="batchAction('refund')"
                  :disabled="this.sels.length===0">退款申请
       </el-button>
-      <el-button type="primary"
-                 size="small"
+      <el-button size="small"
                  @click="batchAction('refunds')"
                  :disabled="this.sels.length===0">退款成功
       </el-button>
-      <el-button type="primary"
-                 size="small"
+      <el-button size="small"
                  @click="batchAction('evaluate')"
                  :disabled="this.sels.length===0">待评价
       </el-button>
-      <el-button type="primary"
-                 size="small"
+      <el-button size="small"
                  @click="batchAction('evaluated')"
                  :disabled="this.sels.length===0">已评价
       </el-button>
-      <el-button type="danger"
-                 size="small"
+      <el-button size="small"
                  @click="batchAction('remove')"
                  :disabled="this.sels.length===0">无效订单
       </el-button>
@@ -179,42 +185,48 @@
       return {
         // 列表表头数据
         tableColumn: [
-          {
-            prop: 'order_sn',
-            label: '订单编号',
-            width: 120,
-            sortable: false
-          },
-          {
-            prop: 'member_id',
-            label: '会员编号',
-            width: 120,
-            sortable: false
-          },
-          {
-            prop: 'pay_id',
-            label: '交易号',
-            width: 120,
-            sortable: false
-          },
-          {
-            prop: 'content',
-            label: '订单内商品信息',
-            width: 140,
-            sortable: false
-          },
-          {
-            prop: 'user_note',
-            label: '用户备注',
-            width: 120,
-            sortable: false
-          },
-          {
-            prop: 'shop_note',
-            label: '商家备注',
-            width: 120,
-            sortable: false
-          }
+//          {
+//            prop: 'total_money',
+//            label: '总金额',
+//            width: 120,
+//            sortable: false
+//          },
+//          {
+//            prop: 'order_sn',
+//            label: '订单编号',
+//            width: 120,
+//            sortable: false
+//          },
+//          {
+//            prop: 'member_id',
+//            label: '会员编号',
+//            width: 120,
+//            sortable: false
+//          },
+//          {
+//            prop: 'pay_id',
+//            label: '交易号',
+//            width: 120,
+//            sortable: false
+//          },
+//          {
+//            prop: 'content',
+//            label: '订单内商品信息',
+//            width: 140,
+//            sortable: false
+//          },
+//          {
+//            prop: 'user_note',
+//            label: '用户备注',
+//            width: 120,
+//            sortable: false
+//          },
+//          {
+//            prop: 'shop_note',
+//            label: '商家备注',
+//            width: 120,
+//            sortable: false
+//          }
         ],
         // 搜索条件
         filters: {
@@ -224,6 +236,8 @@
             {value: 'name', label: '名称'}
           ]
         },
+        good_info: [],
+        good_id: 0,
         list: [],
         total: 0,
         page: 1,
@@ -256,6 +270,11 @@
         this.total = res.param.pages.total
         this.pagesize = res.param.pages.pagesize
         this.list = res.param.list
+
+//        this.list.content.forEach(item => {
+//          this.good_id = item.good_id
+//        })
+//        console.log(this.good_id)
       },
       // 删除
       handleDel (index, row) {
@@ -278,6 +297,17 @@
         }).catch(() => {
 
         })
+      },
+      async getArrayData () {
+        let params = {
+          id: this.good_id
+        }
+        const res = await this.$http.post(`goodsInfo`, params)
+        if (res === null) return
+        this.good_info = res.param
+        // 搜索选项
+        // this.filters.options.type = this.formateOptions(res.param)
+        // this.filters.options.type.unshift({label: '全部分类', value: ''})
       },
       async handleOrdergoods (index, row) {
         console.log(this.$route.path)

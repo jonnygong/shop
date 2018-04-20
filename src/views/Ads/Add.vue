@@ -1,6 +1,6 @@
 <template>
   <div class="form-wrapper">
-    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData" style="margin-top: 20px;">
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"
@@ -16,6 +16,12 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -135,13 +141,12 @@
             label: '广告名称'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'place_id',
             label: '广告位位置',
             option: 'place_id', // 下拉列表数据别名
             labelProp: 'name', // 下拉列表数组内元素 label 别名
-            valueProp: 'id', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'id' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'number',
@@ -161,13 +166,12 @@
             label: '封面图'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'type',
             label: '类型',
             option: 'type', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'text',

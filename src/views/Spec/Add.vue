@@ -16,6 +16,12 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -128,14 +134,22 @@
             label: '自定义规格名字'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'is_use',
             label: '是否使用商品原有价格',
             option: 'is_use', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
+//          {
+//            type: 'select',
+//            prop: 'is_use',
+//            label: '是否使用商品原有价格',
+//            option: 'is_use', // 下拉列表数据别名
+//            labelProp: 'label', // 下拉列表数组内元素 label 别名
+//            valueProp: 'value', // 下拉列表数组内元素 value 别名
+//            placeholder: '请输入内容'
+//          },
           {
             type: 'number',
             prop: 'price',
@@ -155,8 +169,8 @@
         // 下拉列表数据
         options: {
           is_use: [
-            {value: 2, label: '否'},
-            {value: 1, label: '是'}
+            {value: 1, label: '是'},
+            {value: 2, label: '否'}
           ]
         },
         formLoading: false,
@@ -191,11 +205,11 @@
         },
         // 新增界面数据
         formData: {
-          title: 'test',
-          is_use: 1,
-          price: 231,
-          stock: 21315,
-          thumb: 'http://kfw-mp.oss-cn-hangzhou.aliyuncs.com/system/2018-01-31/5a713ed10794d.jpg'
+          title: '',
+          is_use: '',
+          price: '',
+          stock: '',
+          thumb: ''
         }
       }
     },

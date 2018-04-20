@@ -1,6 +1,6 @@
 <template>
   <div class="form-wrapper">
-    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData" style="margin-top: 20px;">
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"
@@ -204,14 +204,14 @@
         },
         // 新增界面数据
         formData: {
-          name: 'test',
-          description: 'test',
-          logo: 'http://kfw-mp.oss-cn-hangzhou.aliyuncs.com/system/2018-01-31/5a713ed10794d.jpg',
-          link_man: 'test',
-          link_tel: '15869002018',
-          link_address: 'test',
-          type: 1,
-          color: '#3EC6E1'
+          name: '',
+          description: '',
+          logo: '',
+          link_man: '',
+          link_tel: '',
+          link_address: '',
+          type: '',
+          color: ''
         }
       }
     },

@@ -1,6 +1,26 @@
 <template>
   <div class="form-wrapper">
     <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+      <el-form-item label="顶级分类" prop="category_top" style="margin-top: 20px">
+        <el-select v-model="formData.pcategory" placeholder="请选择分类名称" @change="getCategoryTopData">
+          <el-option
+            v-for="(item,index) in options.goods_category"
+            :key="index"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="下级分类" prop="category_id" style="margin-top: 20px">
+        <el-select v-model="formData.category_id" placeholder="请选择分类名称">
+          <el-option
+            v-for="(item,index) in options.goods_category_top"
+            :key="index"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"
@@ -16,6 +36,13 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}
+          </el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -83,13 +110,22 @@
           </el-col>
         </el-row>
       </el-form-item>
+      <!-- 多选 -->
+      <el-form-item label="商品关键词" prop="index_id">
+        <template>
+          <el-checkbox-group v-model="formData.index_id" style="display: inline; padding-right: 20px;">
+            <el-checkbox v-for="(item, index) in options.index_id" :key="index" :label="item.id">{{ item.name }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </template>
+      </el-form-item>
       <!-- 多图片上传 -->
-      <el-form-item label="其他图片" prop="thumb_url">
-        <i-muti-uploader :value="formData.thumb_url" ref="album"></i-muti-uploader>
+      <el-form-item label="其他图片" prop="cover">
+        <i-muti-uploader :value="formData.cover" ref="album"></i-muti-uploader>
       </el-form-item>
       <!-- 富文本 -->
       <el-form-item label="图文详情" prop="content">
-        <UE :defaultMsg="formData.content" ref="ue"></UE>
+        <UE :defaultMsg="formData.content" ref="content"></UE>
       </el-form-item>
       <!-- 自定义表单项目 -->
       <!-- ... -->
@@ -107,7 +143,7 @@
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
 
-  const MODEL_NAME = 'Cms' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
+  // const MODEL_NAME = 'Cms' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
   export default {
     data () {
@@ -141,22 +177,20 @@
 //          placeholder: '请输入内容'
 //        },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'type',
             label: '商品类型',
             option: 'type', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'status',
             label: '商品状态',
             option: 'status', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'number',
@@ -233,13 +267,12 @@
             label: '库存'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'stock_config',
             label: '库存状态',
             option: 'stock_config', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'number',
@@ -257,13 +290,12 @@
             label: '用户最多购买数量'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'logistic_type',
             label: '运输方式',
             option: 'logistic_type', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
 //          {
 //            type: 'select',
@@ -275,13 +307,12 @@
 //            placeholder: '请输入内容'
 //          },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'is_hot',
             label: '是否热门',
             option: 'is_hot', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
 //          {
 //            type: 'select',
@@ -331,13 +362,12 @@
 //            placeholder: '请输入内容'
 //          }
           {
-            type: 'select',
+            type: 'radio',
             prop: 'is_recommand',
             label: '是否显示在首页',
             option: 'is_recommand', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'text',
@@ -354,8 +384,8 @@
           ],
           status: [
             {value: 1, label: '上架'},
-            {value: 0, label: '下架'},
-            {value: -1, label: '删除'}
+            {value: 0, label: '下架'}
+            // {value: -1, label: '删除'}
           ],
           stock_config: [
             {value: 0, label: '拍下减库存'},
@@ -389,7 +419,10 @@
           is_check: [
             {value: 1, label: '是'},
             {value: 2, label: '否'}
-          ]
+          ],
+          goods_category: [],
+          goods_category_top: [],
+          index_id: []
         },
         shop_id: [],
         formLoading: false,
@@ -419,39 +452,40 @@
         // 新增界面数据
         formData: {
           //        shop_id: 2,
-          category_id: 1,
-          type: 1,
-          status: 1,
-          weight: 20,
-          sort: 12,
-          title: 'tets',
-          thumb: 'http://kfw-mp.oss-cn-hangzhou.aliyuncs.com/system/2018-01-31/5a713ed10794d.jpg',
-          description: 'fsfasd',
+          category_top: '',
+          category_id: '',
+          type: '',
+          status: '',
+          weight: '',
+          sort: '',
+          title: '',
+          thumb: '',
+          description: '',
           // goods_sn: 2142423,
           // product_sn: 'fsddfas',
-          original_price: 323,
+          original_price: '',
           // cost_price: 123,
           // is_point: 1,
           // offer_point: 214,
           // offer_money: 3123,
           // back_point: 23423,
-          stock: 3123,
-          stock_config: 1,
-          sales: 12,
+          stock: '',
+          stock_config: '',
+          sales: '',
           // weight: 123,
-          max_buy: 432,
-          logistic_type: 1,
-          thumb_url: 'http://kfw-mp.oss-cn-hangzhou.aliyuncs.com/system/2018-01-31/5a713ed10794d.jpg',
+          max_buy: '',
+          logistic_type: '',
+          cover: '',
           // is_new: 1,
-          is_hot: 1,
+          is_hot: '',
           // is_discount: 1,
-          is_recommand: 1,
+          is_recommand: '',
           // is_time: 1,
           // start_time: '',
           // end_time: '',
           // view_count: 123,
           // is_check: 12,
-          content: 'sfdafasdfsdadfsda',
+          content: '',
           index_id: '',
           category_path: '',
           address: ''
@@ -469,23 +503,76 @@
       },
       // 显示编辑界面
       async handleEdit (index, row) {
+        this.getCategoryData()
+        this.getIndexData()
         let params = {
           id: this.$route.params.id
         }
         const res = await this.$http.post(`goodsInfo`, params)
         if (res === null) return
         this.formData = Object.assign({}, res.param)
-        // 经纬度需要数值类型，需转换
-        this.formData.longitude = Number(this.formData.longitude)
-        this.formData.latitude = Number(this.formData.latitude)
+        this.formData.pcategory = Number(this.formData.pcategory)
+        // this.getTopCategoryId()
+        // this.getCategoryTopData()
+        // this.formData.category_id = res.param.category_id
       },
-      async getArrayData () {
-        const res = await this.$http.post(`${MODEL_NAME}/array`)
+      async getTopCategoryId () {
+        let index = this.formData.category_path.indexOf('-')
+        this.formData.category_top = Number(this.formData.category_path.substring(index + 1, this.formData.category_path.indexOf('-', index + 1)))
+        this.formData.category_id = Number(this.formData.category_path.substring(this.formData.category_path.indexOf('-', index + 1) + 1))
+      },
+//      async getArrayData () {
+//        const res = await this.$http.post(`${MODEL_NAME}/array`)
+//        if (res === null) return
+//        this.shop_id = res.param
+//        // 搜索选项
+//        // this.filters.options.type = this.formateOptions(res.param)
+//        // this.filters.options.type.unshift({label: '全部分类', value: ''})
+//      },
+      // 获取分类
+      async getCategoryData () {
+        const res = await this.$http.post(`goodsCategory`, {
+          shop_id: sessionStorage.getItem('shop_id'),
+          category_id: 0
+        })
         if (res === null) return
-        this.shop_id = res.param
-        // 搜索选项
-        // this.filters.options.type = this.formateOptions(res.param)
-        // this.filters.options.type.unshift({label: '全部分类', value: ''})
+        this.options.goods_category = res.param
+      },
+      // 获取分类关键词，指的是二级分类
+      async getIndexPathData () {
+        const res = await this.$http.post(`goodsIndex`, {
+          shop_id: sessionStorage.getItem('shop_id')
+        })
+        if (res === null) return
+        this.options.goods_index = res.param
+        // let indexId = []
+        let categoryPath = []
+        for (let i = 0; i < this.options.goods_index.length; i++) {
+          // indexId.push(this.options.goods_index[i].id)
+          categoryPath.push(`${this.options.goods_index[i].category_id},${this.options.goods_index[i].id}`)
+        }
+//        console.log(indexId + '')
+//        console.log(categoryPath + '')
+        // this.formData.index_id = indexId + ''
+        this.formData.category_path = categoryPath + ''
+      },
+      async getIndexData () {
+        const res = await this.$http.post(`goodsIndex`, {
+          shop_id: sessionStorage.getItem('shop_id')
+        })
+        if (res === null) return
+        this.options.index_id = res.param
+      },
+      async getCategoryTopData () {
+        this.formData.category_id = ''
+        // alert(this.formData.category_top)
+        const res = await this.$http.post(`goodsCategory`, {
+          shop_id: sessionStorage.getItem('shop_id'),
+          category_id: this.formData.pcategory
+        })
+        if (res === null) return
+        this.options.goods_category_top = res.param
+        this.handleEdit()
       },
       formateOptions (source) {
         let _data = []
@@ -517,7 +604,8 @@
               params.start_time = startTime // 后台接收10位时间戳，需要转换
               params.end_time = endTime // 后台接收10位时间戳，需要转换
               params.content = this.getUEContent('content') // 富文本内容
-              params.thumb_url = this.getImageList('album') // 多图上传
+              params.cover = this.getImageList('album') // 多图上传
+              params.category_path = `${this.formData.category_top},${this.formData.category_id}`
               const res = await this.$http.post(`goodsUpdate`, params)
               this.formLoading = false
               if (res === null) return

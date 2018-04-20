@@ -16,6 +16,12 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -139,6 +145,14 @@
             prop: 'avg_price',
             label: '均价',
             placeholder: '请输入均价' // 不加则显示缺省内容
+          },
+          {
+            type: 'radio',
+            prop: 'place_id',
+            label: '广告位位置',
+            option: 'place_id', // 下拉列表数据别名
+            labelProp: 'name', // 下拉列表数组内元素 label 别名
+            valueProp: 'id' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'textarea',

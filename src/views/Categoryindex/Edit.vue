@@ -1,6 +1,6 @@
 <template>
   <div class="form-wrapper">
-    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData" style="margin-top: 20px;">
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"

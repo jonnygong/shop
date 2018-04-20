@@ -59,7 +59,7 @@ const SET_SIDE_NAV = (state, nav) => {
     '停车找车': {iconCls: 'fa fa-ra', url: ''},
     'Pmsadmin/Cplace/list': {iconCls: '', url: '/cplace/cmanage'},
     'Pmsadmin/Clist/list': {iconCls: '', url: '/cplace/clist'},
-    'Pmsadmin/Cquestion/list': {iconCls: '', url: '/cplace/cquestion'},
+    'Pmsadmin/Cquestion/list': {iconCls: '', url: '/cplace/cquestion'}
   }
   for (let key in nav) {
     let item = nav[key]
@@ -71,7 +71,7 @@ const SET_SIDE_NAV = (state, nav) => {
         subItems.push(Object.assign({}, {
           name: subItem.name || '',
           url: route[subItem.url].url || '',
-          iconCls: route[subItem.url].iconCls || '',
+          iconCls: route[subItem.url].iconCls || ''
         }))
       })
       // 一级菜单

@@ -1,13 +1,13 @@
 import systems from '@/configs'
 
-const baseUrl = systems.debug ? '' : 'https://api.kfw001.com'
+const baseUrl = systems.debug ? '' : 'http://greentown.kfw001.com'
 export default {
   // 接口请求baseUrl
   // baseUrl: 'http://api.mp.kfw001.com/',
   baseUrl: baseUrl,
   api: {
     // 公共接口
-    imageUpload: '/System/img/upload', // 文件上传
+    imageUpload: 'https://api.kfw001.com/System/img/upload', // 文件上传
 
     configInfo: '/Shopadmin/Config/info', // 创建活动
     configSave: '/Shopadmin/Config/save', // 创建活动

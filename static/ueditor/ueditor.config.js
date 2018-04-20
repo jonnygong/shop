@@ -20,7 +20,7 @@
    * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
    */
   // 生产环境
-  window.UEDITOR_HOME_URL = "/admin/house_map/static/ueditor/";
+  window.UEDITOR_HOME_URL = "/admin/shop/static/ueditor/";
 
   // 开发环境
   // window.UEDITOR_HOME_URL = "/static/ueditor/";
@@ -36,7 +36,7 @@
     UEDITOR_HOME_URL: URL
 
     // 服务器统一请求接口路径
-    , serverUrl: "http://api.zhongjiao.kfw001.ts/Webadmin/Upload/ueditor"
+    , serverUrl: "https://api.kfw001.com/Caseadmin/img/ueditor"
     // , serverUrl: URL + "php/controller.php"
 
     //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义
@@ -375,7 +375,7 @@
 
     //autoFloatEnabled
     //是否保持toolbar的位置不动,默认true
-    // , autoFloatEnabled: false
+    , autoFloatEnabled: false
     //浮动时工具栏距离浏览器顶部的高度，用于某些具有固定头部的页面
     // ,topOffset:30
     //编辑器底部距离工具栏高度(如果参数大于等于编辑器高度，则设置无效)

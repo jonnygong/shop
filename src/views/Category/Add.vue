@@ -1,6 +1,6 @@
 <template>
   <div class="form-wrapper">
-    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData" style="margin-top: 20px;">
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"
@@ -16,6 +16,12 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -122,11 +128,6 @@
          * placeholder 对应提示信息
          */
         formItems: [
-          {
-            type: 'text',
-            prop: 'name',
-            label: '分类名称'
-          },
           // {
           //   type: 'select',
           //   prop: 'pid',
@@ -137,18 +138,22 @@
           //   placeholder: '请输入内容'
           // },
           {
+            type: 'text',
+            prop: 'name',
+            label: '分类名称'
+          },
+          {
             type: 'upload',
             prop: 'img',
             label: '分类图片'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'is_show',
             label: '是否展示',
             option: 'is_show', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           }
         ],
         // 下拉列表数据
@@ -156,7 +161,8 @@
           is_show: [
             {value: 1, label: '展示'},
             {value: 2, label: '不展示'}
-          ]
+          ],
+          type: []
         },
         formLoading: false,
         formRules: {
@@ -190,12 +196,12 @@
         },
         // 新增界面数据
         formData: {
-          name: 'test',
+          name: '',
           pid: 0,
-          img: 'http://kfw-mp.oss-cn-hangzhou.aliyuncs.com/system/2018-01-31/5a713ed10794d.jpg',
+          img: '',
           path: '',
 //          shop_id: 2,
-          is_show: 1
+          is_show: ''
         }
       }
     },
@@ -209,7 +215,10 @@
         this.$router.back()
       },
       async getArrayData () {
-        const res = await this.$http.post(`${MODEL_NAME}/array`)
+        let params = {
+          shop_id: sessionStorage.getItem('shop_id')
+        }
+        const res = await this.$http.post(`categoryArray`, params)
         if (res === null) return
         this.array = res.param
         // 搜索选项
@@ -257,7 +266,7 @@
       }
     },
     mounted () {
-
+      // this.getArrayData()
     },
     components: {
       UE,

@@ -1,6 +1,6 @@
 <template>
   <div class="form-wrapper">
-    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData" style="margin-top: 20px;" empty-text="无">
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"
@@ -16,6 +16,12 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -83,10 +89,19 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <!-- 富文本 -->
       <el-form-item label="订单内商品信息" prop="content">
-        <UE :defaultMsg="formData.content" ref="ue"></UE>
+        <template>
+          <el-card class="box-card" v-for="(item, index) in formData.content" :key="index" style="margin: 5px 0;">
+            <p style="line-height: 10px;  padding: 0;">商品名称：{{ item.good_id }}</p>
+            <p style="line-height: 10px; padding: 0;">商品规格：{{ item.spec_id }}</p>
+            <p style="line-height: 10px;  padding: 0;">购买总量：{{ item.buy_sum }}</p>
+          </el-card>
+        </template>
       </el-form-item>
+      <!-- 富文本 -->
+      <!--<el-form-item label="订单内商品信息" prop="content">-->
+        <!--<UE :defaultMsg="formData.content" ref="ue"></UE>-->
+      <!--</el-form-item>-->
       <!-- 自定义表单项目 -->
       <!-- ... -->
     </el-form>
@@ -132,37 +147,35 @@
             prop: 'order_sn',
             label: '订单编号'
           },
-          {
-            type: 'select',
-            prop: 'shop_id',
-            label: '所属商家',
-            option: 'shop_id', // 下拉列表数据别名
-            labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
-          },
+//          {
+//            type: 'select',
+//            prop: 'shop_id',
+//            label: '所属商家',
+//            option: 'shop_id', // 下拉列表数据别名
+//            labelProp: 'label', // 下拉列表数组内元素 label 别名
+//            valueProp: 'value', // 下拉列表数组内元素 value 别名
+//            placeholder: '请输入内容'
+//          },
           {
             type: 'number',
             prop: 'member_id',
             label: '会员编号'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'status',
             label: '订单状态',
             option: 'status', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'type',
             label: '订单类型',
             option: 'type', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'number',
@@ -185,13 +198,12 @@
             label: '积分减免'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'logistic_type',
             label: '运输方式',
             option: 'logistic_type', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'number',
@@ -219,13 +231,12 @@
             label: '回扣积分'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'pay_type',
             label: '支付类型',
             option: 'pay_type', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'text',
@@ -251,6 +262,16 @@
             type: 'time',
             prop: 'end_time',
             label: '订单完成时间'
+          },
+          {
+            type: 'time',
+            prop: 'create_time',
+            label: '订单创建时间'
+          },
+          {
+            type: 'time',
+            prop: 'update_time',
+            label: '订单更新时间'
           }
         ],
         // 下拉列表数据
@@ -331,7 +352,7 @@
           user_note: '',
           shop_note: '',
           end_time: '',
-          content: ''
+          content: []
         }
       }
     },
@@ -349,12 +370,15 @@
         let params = {
           id: this.$route.params.id
         }
-        const res = await this.$http.post(`${MODEL_NAME}/info`, params)
+        const res = await this.$http.post(`orderInfo`, params)
         if (res === null) return
         this.formData = Object.assign({}, res.param)
-        // 经纬度需要数值类型，需转换
-        this.formData.longitude = Number(this.formData.longitude)
-        this.formData.latitude = Number(this.formData.latitude)
+        this.formData.pay_time = this.formData.pay_time * 1000
+        this.formData.end_time = this.formData.end_time * 1000
+        this.formData.create_time = this.formData.create_time * 1000
+        this.formData.update_time = this.formData.update_time * 1000
+        this.formData.content = JSON.parse(this.formData.content)
+        console.log(this.formData.content)
       },
       async getArrayData () {
         const res = await this.$http.post(`${MODEL_NAME}/array`)
@@ -425,5 +449,7 @@
 </script>
 
 <style lang="scss" scoped>
-
+.box-card {
+  padding:0;
+}
 </style>

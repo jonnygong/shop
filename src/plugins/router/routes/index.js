@@ -60,28 +60,28 @@ let routes = [
         name: '商品分类新增',
         hidden: true,
         meta: {requiresAuth: true}
+      },
+      {
+        path: '/category/:category_id/categorynext',
+        component: () => import('@/views/Categorynext/List.vue'),
+        name: '商品子分类列表',
+        hidden: true,
+        meta: {requiresAuth: true}
+      },
+      {
+        path: '/category/:category_id/categorynext/edit/:id',
+        component: () => import('@/views/Categorynext/Edit.vue'),
+        name: '商品子分类编辑',
+        hidden: true,
+        meta: {requiresAuth: true}
+      },
+      {
+        path: '/category/:category_id/categorynext/add',
+        component: () => import('@/views/Categorynext/Add.vue'),
+        name: '商品子分类新增',
+        hidden: true,
+        meta: {requiresAuth: true}
       }
-      // {
-      //   path: '/category/:category_id/categoryindex',
-      //   component: () => import('@/views/Categoryindex/List.vue'),
-      //   name: '商品关键词列表',
-      //   hidden: true,
-      //   meta: {requiresAuth: true}
-      // },
-      // {
-      //   path: '/category/:category_id/categoryindex/edit/:id',
-      //   component: () => import('@/views/Categoryindex/Edit.vue'),
-      //   name: '商品关键词编辑',
-      //   hidden: true,
-      //   meta: {requiresAuth: true}
-      // },
-      // {
-      //   path: '/category/:category_id/categoryindex/add',
-      //   component: () => import('@/views/Categoryindex/Add.vue'),
-      //   name: '商品关键词新增',
-      //   hidden: true,
-      //   meta: {requiresAuth: true}
-      // }
     ]
   },
   // 商品关键词

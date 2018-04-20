@@ -9,7 +9,7 @@ const setUserInfo = ({commit}, data) => {
   commit('SET_USER_INFO', data)
 }
 // 注销
-const login_out = ({commit}) => {
+const loginOut = ({commit}) => {
   // 登出
   commit('LOGIN_OUT')
 }
@@ -25,6 +25,6 @@ const getUserAuth = async ({commit}) => {
 export default {
   login,
   setUserInfo,
-  login_out,
+  loginOut,
   getUserAuth
 }

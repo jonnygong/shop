@@ -1,6 +1,6 @@
 <template>
   <div class="form-wrapper">
-    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+    <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData" style="margin-top: 20px;">
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"
@@ -16,6 +16,13 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}
+          </el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -85,11 +92,11 @@
       </el-form-item>
       <!-- 富文本 -->
       <!--<el-form-item label="富文本" prop="name">-->
-        <!--<UE :defaultMsg="formData.detail" ref="ue"></UE>-->
+      <!--<UE :defaultMsg="formData.detail" ref="ue"></UE>-->
       <!--</el-form-item>-->
       <!-- 多图片上传 -->
       <!--<el-form-item label="多图片上传" prop="images">-->
-        <!--<i-muti-uploader :value="formData.images" ref="album"></i-muti-uploader>-->
+      <!--<i-muti-uploader :value="formData.images" ref="album"></i-muti-uploader>-->
       <!--</el-form-item>-->
       <!-- 自定义表单项目 -->
       <!-- ... -->
@@ -107,7 +114,7 @@
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
 
-//  const MODEL_NAME = 'Ads' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
+  //  const MODEL_NAME = 'Ads' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
   export default {
     data () {
@@ -137,13 +144,12 @@
             label: '广告名称'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'place_id',
             label: '广告位位置',
             option: 'place_id', // 下拉列表数据别名
             labelProp: 'name', // 下拉列表数组内元素 label 别名
-            valueProp: 'id', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'id' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'number',
@@ -163,13 +169,12 @@
             label: '封面图'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'type',
             label: '类型',
             option: 'type', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'text',
@@ -246,17 +251,17 @@
         this.formData = Object.assign({}, res.param)
         this.formData.end_time = new Date(this.formData.end_time * 1000)
         this.formData.start_time = new Date(this.formData.start_time * 1000)
-        this.options.place_id = res.param.ads
+//        this.options.place_id = res.param.ads
         // 经纬度需要数值类型，需转换
         // this.formData.longitude = Number(this.formData.longitude)
         // this.formData.latitude = Number(this.formData.latitude)
       },
-       async getArrayData () {
+      async getArrayData () {
         const res = await this.$http.post(`adsArray`, {})
         if (res === null) return
         this.options.place_id = res.param.place
         this.handleEdit()
-         // let place = {}
+        // let place = {}
         // res.param.place.forEach(item => {
         //     place[item.id] = item.name
         // })

@@ -19,6 +19,7 @@ router.beforeEach((to, from, next) => {
   if (process.env.NODE_ENV === 'production') {
     if (!isLogin) {
       window.location.href = '/admin/'
+      // next()
     } else {
       let openId = sessionStorage.getItem('shop_id')
       if (openId === undefined && to.path !== '/main') {

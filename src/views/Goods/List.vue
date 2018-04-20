@@ -45,32 +45,6 @@
       </el-table-column>
       <el-table-column prop="title" label="商品名称" width="200">
       </el-table-column>
-      <el-table-column prop="category_id" label="分类名称" width="120">
-        <template slot-scope="scope">
-          {{ category_list[scope.row.category_id] }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="type" label="商品类型" width="120">
-        <template slot-scope="scope">
-          {{ type[scope.row.type] }}
-        </template>
-      </el-table-column>
-      <!-- 普通列表显示 -->
-      <el-table-column
-        v-for="(item,index) in tableColumn"
-        :key="index"
-        :prop="item.prop"
-        :label="item.label"
-        :min-width="item.width"
-        :sortable="item.sortable">
-      </el-table-column>
-      <el-table-column prop="status" label="商品状态" width="100">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'gray' : 'danger'">
-            {{ scope.row.status === 1 ? '上架' : scope.row.status === -1 ? '已删除' : '下架' }}
-          </el-tag>
-        </template>
-      </el-table-column>
       <!-- 图片显示 -->
       <el-table-column prop="thumb" label="商品封面图" width="130">
         <template slot-scope="scope">
@@ -85,6 +59,32 @@
             </div>
           </el-popover>
         </template>
+      </el-table-column>
+      <el-table-column prop="status" label="商品状态" width="100">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'gray' : 'danger'">
+            {{ scope.row.status === 1 ? '上架' : scope.row.status === -1 ? '已删除' : '下架' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <!--<el-table-column prop="category_id" label="分类名称" width="120">-->
+        <!--<template slot-scope="scope">-->
+          <!--{{ category_list[scope.row.category_id] }}-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <el-table-column prop="type" label="商品类型" width="120">
+        <template slot-scope="scope">
+          {{ type[scope.row.type] }}
+        </template>
+      </el-table-column>
+      <!-- 普通列表显示 -->
+      <el-table-column
+        v-for="(item,index) in tableColumn"
+        :key="index"
+        :prop="item.prop"
+        :label="item.label"
+        :min-width="item.width"
+        :sortable="item.sortable">
       </el-table-column>
       <!-- 时间戳转日期 -->
       <el-table-column prop="update_time" label="更新时间" width="180" :formatter="formateTime">

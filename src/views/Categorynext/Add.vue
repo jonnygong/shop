@@ -16,6 +16,12 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -99,18 +105,18 @@
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
 
-  const MODEL_NAME = 'Cms' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
+//  const MODEL_NAME = 'Cms' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
   export default {
     data () {
-      var validateContent = (rule, value, callback) => {
-        value = this.$refs['ue'].getUEContent()
-        if (value === '') {
-          callback(new Error('请输入内容'))
-        } else {
-          callback()
-        }
-      }
+//      var validateContent = (rule, value, callback) => {
+//        value = this.$refs['ue'].getUEContent()
+//        if (value === '') {
+//          callback(new Error('请输入内容'))
+//        } else {
+//          callback()
+//        }
+//      }
       return {
         /**
          * type 'text'(普通文本) 'number'(数值) 'textarea'(文本域)
@@ -122,42 +128,41 @@
          * placeholder 对应提示信息
          */
         formItems: [
+          // {
+          //   type: 'select',
+          //   prop: 'pid',
+          //   label: '父级分类',
+          //   option: 'pid', // 下拉列表数据别名
+          //   labelProp: 'name', // 下拉列表数组内元素 label 别名
+          //   valueProp: 'id', // 下拉列表数组内元素 value 别名
+          //   placeholder: '请输入内容'
+          // },
           {
             type: 'text',
-            prop: 'title',
-            label: '自定义规格名字'
-          },
-          {
-            type: 'select',
-            prop: 'is_use',
-            label: '是否使用商品原有价格',
-            option: 'is_use', // 下拉列表数据别名
-            labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
-          },
-          {
-            type: 'number',
-            prop: 'price',
-            label: '价格'
-          },
-          {
-            type: 'number',
-            prop: 'stock',
-            label: '库存'
+            prop: 'name',
+            label: '分类名称'
           },
           {
             type: 'upload',
-            prop: 'thumb',
-            label: '图片'
+            prop: 'img',
+            label: '分类图片'
+          },
+          {
+            type: 'radio',
+            prop: 'is_show',
+            label: '是否展示',
+            option: 'is_show', // 下拉列表数据别名
+            labelProp: 'label', // 下拉列表数组内元素 label 别名
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           }
         ],
         // 下拉列表数据
         options: {
-          is_use: [
-            {value: 2, label: '否'},
-            {value: 1, label: '是'}
-          ]
+          is_show: [
+            {value: 1, label: '展示'},
+            {value: 2, label: '不展示'}
+          ],
+          pid: []
         },
         formLoading: false,
         formRules: {
@@ -191,11 +196,12 @@
         },
         // 新增界面数据
         formData: {
-          title: '',
-          is_use: '',
-          price: '',
-          stock: '',
-          thumb: ''
+          name: '',
+          // pid: '',
+          img: '',
+          path: '',
+//          shop_id: 2,
+          is_show: ''
         }
       }
     },
@@ -209,12 +215,15 @@
         this.$router.back()
       },
       async getArrayData () {
-        const res = await this.$http.post(`${MODEL_NAME}/array`)
+        let params = {
+          shop_id: sessionStorage.getItem('shop_id')
+        }
+        const res = await this.$http.post(`categoryArray`, params)
         if (res === null) return
-        this.array = res.param
+        this.options.pid = res.param
         // 搜索选项
-        this.filters.options.type = this.formateOptions(res.param.type)
-        this.filters.options.type.unshift({label: '全部分类', value: ''})
+        // this.filters.options.type = this.formateOptions(res.param.type)
+        // this.filters.options.type.unshift({label: '全部分类', value: ''})
       },
       formateOptions (source) {
         let _data = []
@@ -230,10 +239,13 @@
             this.$confirm('确认提交吗？', '提示', {}).then(async () => {
               this.formLoading = true
 
-              let params = Object.assign({}, this.formData)
+              let params = Object.assign({
+                pid: this.$route.params.category_id,
+                shop_id: sessionStorage.getItem('shop_id')
+              }, this.formData)
               // params.detail = this.getUEContent('detail') // 富文本内容
               // params.images = this.getImageList('album') // 多图上传
-              const res = await this.$http.post(`specAdd`, params)
+              const res = await this.$http.post(`categoryAdd`, params)
               this.formLoading = false
               if (res === null) return
               this.$message({
@@ -255,7 +267,7 @@
       }
     },
     mounted () {
-
+      this.getArrayData()
     },
     components: {
       UE,

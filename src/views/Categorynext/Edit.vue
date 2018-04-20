@@ -16,6 +16,12 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -24,7 +30,7 @@
                               align="right"
                               type="datetime"
                               placeholder="选择开始日期"
-                              style="width: 100%;"></el-date-picker>
+                              style="width: 100%"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="2">-</el-col>
@@ -34,7 +40,7 @@
                               align="right"
                               type="datetime"
                               placeholder="选择结束日期"
-                              style="width: 100%;"></el-date-picker>
+                              style="width: 100%"></el-date-picker>
 
             </el-form-item>
           </el-col>
@@ -45,10 +51,11 @@
                         align="right"
                         type="datetime"
                         :placeholder="item.placeholder ? item.placeholder : '请选择时间' "
-                        style="width: 100%;"></el-date-picker>
+                        style="width: 100%"></el-date-picker>
         <!-- 单图片上传 -->
         <i-uploader v-else-if="item.type === 'upload'"
                     v-model="formData[item.prop]"></i-uploader>
+
         <!-- 选择器 -->
         <el-select v-else-if="item.type === 'select'"
                    v-model.number="formData[item.prop]"
@@ -82,7 +89,6 @@
           </el-col>
         </el-row>
       </el-form-item>
-
       <!-- 自定义表单项目 -->
       <!-- ... -->
     </el-form>
@@ -99,18 +105,19 @@
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
 
-  const MODEL_NAME = 'Cms' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
+//  const MODEL_NAME = 'Cms' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
   export default {
     data () {
-      var validateContent = (rule, value, callback) => {
-        value = this.$refs['ue'].getUEContent()
-        if (value === '') {
-          callback(new Error('请输入内容'))
-        } else {
-          callback()
-        }
-      }
+      // 富文本校验
+//      var validateContent = (rule, value, callback) => {
+//        value = this.$refs['ue'].getUEContent()
+//        if (value === '') {
+//          callback(new Error('请输入内容'))
+//        } else {
+//          callback()
+//        }
+//      }
       return {
         /**
          * type 'text'(普通文本) 'number'(数值) 'textarea'(文本域)
@@ -124,52 +131,47 @@
         formItems: [
           {
             type: 'text',
-            prop: 'title',
-            label: '自定义规格名字'
+            prop: 'name',
+            label: '分类名称'
           },
-          {
-            type: 'select',
-            prop: 'is_use',
-            label: '是否使用商品原有价格',
-            option: 'is_use', // 下拉列表数据别名
-            labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
-          },
-          {
-            type: 'number',
-            prop: 'price',
-            label: '价格'
-          },
-          {
-            type: 'number',
-            prop: 'stock',
-            label: '库存'
-          },
+          // {
+          //   type: 'select',
+          //   prop: 'pid',
+          //   label: '父级分类',
+          //   option: 'pid', // 下拉列表数据别名
+          //   labelProp: 'label', // 下拉列表数组内元素 label 别名
+          //   valueProp: 'value', // 下拉列表数组内元素 value 别名
+          //   placeholder: '请输入内容'
+          // },
           {
             type: 'upload',
-            prop: 'thumb',
-            label: '图片'
+            prop: 'img',
+            label: '分类图片'
+          },
+          {
+            type: 'radio',
+            prop: 'is_show',
+            label: '是否展示',
+            option: 'is_show', // 下拉列表数据别名
+            labelProp: 'label', // 下拉列表数组内元素 label 别名
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           }
         ],
         // 下拉列表数据
         options: {
-          is_use: [
-            {value: 2, label: '否'},
-            {value: 1, label: '是'}
+          is_show: [
+            {value: 1, label: '展示'},
+            {value: 2, label: '不展示'}
           ]
         },
+        shop_id: [],
         formLoading: false,
         formRules: {
           // sale_status: [
           //   {type: 'number', required: true, message: '请选择区域', trigger: 'blur'}
           // ],
-          // cover: [
-          //   {required: true, message: '请上传封面图片'}
-          // ],
-          // title: [
-          //   {required: true, message: '请输入项目标题', trigger: 'blur'}
-          // ],
+          // cover: [{required: true, message: '请上传封面图片'}],
+          // title: [{required: true, message: '请输入项目标题', trigger: 'blur'}],
           // start_time: [
           //   {type: 'date', required: true, message: '请输入开始时间', trigger: 'blur'}
           // ],
@@ -185,17 +187,16 @@
           // longitude: [
           //   {type: 'number', required: true, message: '请选择经度', trigger: 'blur'}
           // ],
-          // detail: [
-          //   {validator: validateContent, trigger: 'blur'}
-          // ]
+          // detail: [{validator: validateContent, trigger: 'blur'}]
         },
         // 新增界面数据
         formData: {
-          title: '',
-          is_use: '',
-          price: '',
-          stock: '',
-          thumb: ''
+          name: '',
+          // pid: '',
+          img: '',
+          path: '',
+          shop_id: '',
+          is_show: ''
         }
       }
     },
@@ -208,13 +209,25 @@
       handleCancel () {
         this.$router.back()
       },
-      async getArrayData () {
-        const res = await this.$http.post(`${MODEL_NAME}/array`)
+      // 显示编辑界面
+      async handleEdit (index, row) {
+        let params = {
+          id: this.$route.params.id
+        }
+        const res = await this.$http.post(`categoryInfo`, params)
         if (res === null) return
-        this.array = res.param
+        this.formData = Object.assign({}, res.param)
+        // 经纬度需要数值类型，需转换
+        this.formData.longitude = Number(this.formData.longitude)
+        this.formData.latitude = Number(this.formData.latitude)
+      },
+      async getArrayData () {
+        const res = await this.$http.post(`categoryArray`)
+        if (res === null) return
+        this.shop_id = res.param
         // 搜索选项
-        this.filters.options.type = this.formateOptions(res.param.type)
-        this.filters.options.type.unshift({label: '全部分类', value: ''})
+        // this.filters.options.type = this.formateOptions(res.param)
+        // this.filters.options.type.unshift({label: '全部分类', value: ''})
       },
       formateOptions (source) {
         let _data = []
@@ -223,27 +236,39 @@
         }
         return _data.slice(0)
       },
-      // 新增
+      // 编辑
       formSubmit () {
-        this.$refs.formData.validate((valid) => {
+        this.$refs.formData.validate(valid => {
           if (valid) {
             this.$confirm('确认提交吗？', '提示', {}).then(async () => {
               this.formLoading = true
-
-              let params = Object.assign({}, this.formData)
-              // params.detail = this.getUEContent('detail') // 富文本内容
+              // 处理时间为时间戳
+              // let _next_open_ = this.formData.next_open
+              // if (typeof this.formData.next_open === 'number') {
+              //   _next_open_ = this.formData.next_open / 1000
+              // } else {
+              //   _next_open_ = new Date(this.formData.next_open).getTime() / 1000
+              // }
+              let params = Object.assign({
+                pid: this.$route.params.category_id
+              }, this.formData)
+              // params.next_open = _next_open_ // 后台接收10位时间戳，需要转换
+              // params.detail = this.getUEContent('ue') // 富文本内容
               // params.images = this.getImageList('album') // 多图上传
-              const res = await this.$http.post(`specAdd`, params)
+              const res = await this.$http.post(`categoryUpdate`, params)
               this.formLoading = false
               if (res === null) return
               this.$message({
-                message: '新建成功',
+                message: '修改成功',
                 type: 'success'
               })
               this.handleCancel()
             })
           }
         })
+      },
+      selsChange (sels) {
+        this.sels = sels
       },
       // UEditor 获取内容，传入 ref 的值
       getUEContent (ele) {
@@ -255,7 +280,7 @@
       }
     },
     mounted () {
-
+      this.handleEdit()
     },
     components: {
       UE,
